@@ -6,8 +6,9 @@ data/*
 *.lastbuildstate
 */bin/*
 bin/*
-*Debug/*
-*Release/*
+*.bin
+*Debug*
+*Release*
 include/*
 
 # Prerequisites
