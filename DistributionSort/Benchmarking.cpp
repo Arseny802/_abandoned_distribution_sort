@@ -52,7 +52,7 @@ BOOL Benchmarking::WriteBenchmarkFile()
 
 // Start benchmark to get latency
 // and read/write speed of drive.
-inline void Benchmarking::CurrentDriveBenchmark()
+void Benchmarking::CurrentDriveBenchmark()
 {
 	_tprintf(TEXT("-----------------------\n"));
 	_tprintf(TEXT("Current drive benchmark\n"));

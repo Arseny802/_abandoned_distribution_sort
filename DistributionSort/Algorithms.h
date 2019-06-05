@@ -3,13 +3,23 @@
 
 #include "AbstactAlgorithm.h"
 
+/*class BaseSorter
+{
+public:
+	BaseSorter();
+	~BaseSorter();
+	BaseSorter(std::string inputFile);
+	BaseSorter(std::string inputFile, std::string outputFile);
+	uint64_t * SortFile(std::string fileName, DWORD sizeToRead) override;
+};*/
+
 class HeapSort : public Algorithm
 {
 public:
 	HeapSort();
 	HeapSort(std::string inputFile);
 	HeapSort(std::string inputFile, std::string outputFile);
-	uint64_t *  SortFile(std::string fileName, DWORD sizeToRead) override;
+	uint64_t * SortFile(std::string fileName, DWORD sizeToRead) override;
 private:
 	// Changing positions of elements in this array.
 	inline void SwapItems(uint64_t *arr, uint64_t left, uint64_t right);

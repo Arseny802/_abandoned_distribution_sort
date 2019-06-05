@@ -12,7 +12,7 @@ WinFiles::~WinFiles()
 
 // Creates directory with this name in local directory
 // Returns success.
-inline BOOL WinFiles::CreateLocalDirectory(std::string dirName)
+BOOL WinFiles::CreateLocalDirectory(std::string dirName)
 {
 	std::wstring wstr1(dirName.begin(), dirName.end());
 	LPCWSTR wszDirName = wstr1.c_str();
@@ -21,7 +21,7 @@ inline BOOL WinFiles::CreateLocalDirectory(std::string dirName)
 
 // Delete directory with this name in local directory
 // Returns success.
-inline BOOL WinFiles::DeleteLocalDirectory(std::string dirName)
+BOOL WinFiles::DeleteLocalDirectory(std::string dirName)
 {
 	std::wstring wstr1(dirName.begin(), dirName.end());
 	LPCWSTR wszDirName = wstr1.c_str();
@@ -32,7 +32,7 @@ inline BOOL WinFiles::DeleteLocalDirectory(std::string dirName)
 // Returns result file size in bytes, 
 // or -1 on open file error,
 // or -2 on write file error.
-inline LARGE_INTEGER WinFiles::WriteToDataFile(std::string filename,
+LARGE_INTEGER WinFiles::WriteToDataFile(std::string filename,
 	char * DataBuffer, DWORD dwBytesToWrite)
 {
 	HANDLE fileHandle;
@@ -120,7 +120,7 @@ inline LARGE_INTEGER WinFiles::WriteToDataFile(std::string filename,
 
 // Read from file by this filename data to this ReadBuffer this length 
 // of bytes from this position. Returnes ContinuenationPoint (is there more data).
-inline BOOL WinFiles::ReadDataFile(std::string filename, char *ReadBuffer, DWORD length, uint64_t distanceFrom)
+BOOL WinFiles::ReadDataFile(std::string filename, char *ReadBuffer, DWORD length, uint64_t distanceFrom)
 {
 	HANDLE fileHandle;
 	DWORD dwBytesRead = 0;
@@ -196,7 +196,7 @@ inline BOOL WinFiles::ReadDataFile(std::string filename, char *ReadBuffer, DWORD
 // Returns file size in bytes by it's name,
 // or -1 if file doesn't exist,
 // or -2 if couldn't open file.
-inline LARGE_INTEGER WinFiles::GetFileSizeInBytes(std::string filename)
+LARGE_INTEGER WinFiles::GetFileSizeInBytes(std::string filename)
 {
 	HANDLE fileHandle;
 	LARGE_INTEGER lFileSize = { 0 };
@@ -229,7 +229,7 @@ inline LARGE_INTEGER WinFiles::GetFileSizeInBytes(std::string filename)
 }
 
 // Deletes file by it's name. Returns success.
-inline BOOL WinFiles::DeleteDataFile(std::string filename)
+BOOL WinFiles::DeleteDataFile(std::string filename)
 {
 	std::wstring wstr1(filename.begin(), filename.end());
 	LPCWSTR wszPath = wstr1.c_str();

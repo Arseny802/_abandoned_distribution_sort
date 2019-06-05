@@ -1,7 +1,7 @@
 #include "DeviceInfo.h"
 
 // print's all RAM statistics
-inline void DeviceInfo::PrintDeviceInfoRAM()
+void DeviceInfo::PrintDeviceInfoRAM()
 {
 	MEMORYSTATUSEX statex;
 	statex.dwLength = sizeof(statex);
@@ -28,7 +28,7 @@ inline void DeviceInfo::PrintDeviceInfoRAM()
 }
 
 // Get's drive geometry to get params
-inline BOOL DeviceInfo::GetDriveGeometry(LPCWSTR wszPath, DISK_GEOMETRY *pdg)
+BOOL DeviceInfo::GetDriveGeometry(LPCWSTR wszPath, DISK_GEOMETRY *pdg)
 {
 	HANDLE hDevice = INVALID_HANDLE_VALUE;
 	BOOL bResult = FALSE;
@@ -62,7 +62,7 @@ inline BOOL DeviceInfo::GetDriveGeometry(LPCWSTR wszPath, DISK_GEOMETRY *pdg)
 
 // Guess it's SSD or HDD
 // Warining: code needs admin rights!
-inline std::wstring DeviceInfo::GetFisicalDriveType(LPCWSTR wszPath)
+std::wstring DeviceInfo::GetFisicalDriveType(LPCWSTR wszPath)
 {
 	//As an example, let's test 1st physical drive 
 	HANDLE hDevice = CreateFile(L"\\\\?\\PhysicalDrive0",
@@ -190,7 +190,7 @@ inline std::wstring DeviceInfo::GetFisicalDriveType(LPCWSTR wszPath)
 }
 
 // print fisical drive info by it's name
-inline BOOL DeviceInfo::PrintDeviceInfoDrive(std::string drive)
+BOOL DeviceInfo::PrintDeviceInfoDrive(std::string drive)
 {
 	DISK_GEOMETRY pdg = { 0 }; // disk drive geometry structure
 	ULONGLONG DiskSize = 0;    // size of the drive, in bytes
@@ -235,11 +235,11 @@ inline BOOL DeviceInfo::PrintDeviceInfoDrive(std::string drive)
 }
 
 // print all important device info
-inline void DeviceInfo::PrintDeviceInfo()
+void DeviceInfo::PrintDeviceInfo()
 {
 	_tprintf(TEXT("__________________\n"));
 	_tprintf(TEXT("DEVICE INFORMATION\n"));
-	PrintDeviceInfoRAM();
+	DeviceInfo::PrintDeviceInfoRAM();
 	for (int iter = 0; iter < 10; ++iter)
 	{
 		if (!PrintDeviceInfoDrive(Concat(

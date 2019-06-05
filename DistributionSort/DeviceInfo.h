@@ -13,20 +13,20 @@ class DeviceInfo
 {
 public:
 	// print's all RAM statistics
-	inline void PrintDeviceInfoRAM();
+	void PrintDeviceInfoRAM();
 
 	// Get's drive geometry to get params
-	inline BOOL GetDriveGeometry(LPCWSTR wszPath, DISK_GEOMETRY *pdg);
+	BOOL GetDriveGeometry(LPCWSTR wszPath, DISK_GEOMETRY *pdg);
 
 	// Guess it's SSD or HDD
 	// Warining: code needs admin rights!
-	inline std::wstring GetFisicalDriveType(LPCWSTR wszPath);
+	std::wstring GetFisicalDriveType(LPCWSTR wszPath);
 
 	// print fisical drive info by it's name
-	inline BOOL PrintDeviceInfoDrive(std::string drive);
+	BOOL PrintDeviceInfoDrive(std::string drive);
 
 	// print all important device info
-	inline void PrintDeviceInfo();
+	void PrintDeviceInfo();
 };
 
 #endif

@@ -14,7 +14,7 @@ FileGenerator::~FileGenerator()
 
 
 // Generate datafile with this name and with this size in GB.
-inline void FileGenerator::GenerateDataFile(std::string filename, double size_GB)
+void FileGenerator::GenerateDataFile(std::string filename, double size_GB)
 {
 	LARGE_INTEGER dwTotalFileSize = { (DWORD)(size_GB * (double)GB_TO_BYTES) };
 	LARGE_INTEGER currentFileSize = fileManager->WriteToDataFile(filename, NULL, NULL);
