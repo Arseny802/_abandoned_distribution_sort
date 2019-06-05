@@ -30,13 +30,10 @@
     <ClInclude Include="AbstactAlgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QuiekSort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HeapSort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FileGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
