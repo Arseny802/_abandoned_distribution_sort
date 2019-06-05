@@ -1,4 +1,4 @@
-#include "QuiekSort.h"
+#include "Algorithms.h"
 
 QuiekSort::QuiekSort()
 {

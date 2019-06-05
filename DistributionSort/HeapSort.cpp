@@ -1,4 +1,4 @@
-#include "HeapSort.h"
+#include "Algorithms.h"
 
 HeapSort::HeapSort()
 {

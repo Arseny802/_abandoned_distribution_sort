@@ -44,25 +44,14 @@ typedef struct Statistics
 
 class Algorithm
 {
-private:
-	const uint64_t _MaxIntegerValue = 0xFFFFFFFF;
-	const int defaultPivot = 49 * CONVERT_DIV;
-
-	std::vector<std::string> bufferFileNames;
-	DWORD sqrtPivot = 0;
-	LARGE_INTEGER fileSize;
-	uint64_t integerStep;
-
-	clock_t startTimePoint;
-	clock_t endTimePoint;
-
-	// Check input file for correct contents.
-	bool _ValidateDataFile(std::string fileName = "");
 public:
 	SortStatistics statistics;
 
 	// Constructor
 	Algorithm();
+
+	// Destructor
+	~Algorithm();
 
 	// sets input file name
 	void SetInputFileName(std::string inputFile);
@@ -89,6 +78,23 @@ protected:
 
 	BOOL _ReadFile(std::string fileName, uint64_t * integers,
 		DWORD length, DWORD offset, DWORD integersOffset = 0);
+
+private:
+	const uint64_t _MaxIntegerValue = 0xFFFFFFFF;
+	const int defaultPivot = 49 * CONVERT_DIV;
+
+	WinFiles* fileManager;
+
+	std::vector<std::string> bufferFileNames;
+	DWORD sqrtPivot = 0;
+	LARGE_INTEGER fileSize;
+	uint64_t integerStep;
+
+	clock_t startTimePoint;
+	clock_t endTimePoint;
+
+	// Check input file for correct contents.
+	bool _ValidateDataFile(std::string fileName = "");
 };
 
 #endif

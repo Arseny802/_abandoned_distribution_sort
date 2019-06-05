@@ -1,51 +1,17 @@
 #include "AbstactAlgorithm.h"
 
-// Check input file for correct contents.
-bool Algorithm::_ValidateDataFile(std::string fileName = "")
-{
-	if (fileName.length() == 0) fileName = inputFile;
-	char correctData[] = { '0', '1', '2' , '3' ,
-		'4' , '5' , '6' , '7' , '8' , '9' ,
-		'A' , 'B' , 'C' , 'D' , 'E' , 'F' };
-	startTimePoint = clock();
-
-	// file size must multiple 8
-	if (GetFileSizeInBytes(fileName).QuadPart % ONE_BYTE != 0)
-	{
-		std::wstring wstr(fileName.begin(), fileName.end());
-		_tprintf(TEXT("ERROR: file \"%s\" has wrong size!\n"), wstr.c_str());
-		return FALSE;
-	}
-
-	char *buffer = (char*)malloc(REED_FILE__BUFFER_SIZE);
-	uint64_t readIter = 0;
-
-	// file data must contain specific characters
-	/*while (ReadDataFile(fileName, buffer, REED_FILE__BUFFER_SIZE, readIter))
-	{
-		char *nextChar = buffer;
-		while (*nextChar)
-		{
-			if (!strchr(correctData, *nextChar))
-			{
-				std::wstring wstr(fileName.begin(), fileName.end());
-				_tprintf(TEXT("ERROR: file \"%s\" has wrong character - '%c'!\n"), wstr.c_str(), nextChar);
-			}
-		}
-		readIter += REED_FILE__BUFFER_SIZE;
-	}*/
-	free(buffer);
-
-	endTimePoint = clock();
-	statistics.totalValidateTime = double(endTimePoint - startTimePoint) / CLOCKS_PER_SEC;
-	return TRUE;
-}
-
 // Constructor
 Algorithm::Algorithm()
 {
 	statistics.inputFile = TEXT(DEFAULT_INPUT_FILE);
 	statistics.outputFile = TEXT(DEFAULT_OUTPUT_FILE);
+	fileManager = new WinFiles();
+}
+
+// Destructor
+Algorithm::~Algorithm()
+{
+	delete fileManager;
 }
 
 // sets input file name
@@ -74,11 +40,11 @@ void Algorithm::DisributeFile()
 	}
 	startTimePoint = clock();
 
-	fileSize = GetFileSizeInBytes(inputFile);
+	fileSize = fileManager->GetFileSizeInBytes(inputFile);
 	sqrtPivot = (DWORD)RoundDouble(2 * FileSizeSQRT(fileSize));
 	if (sqrtPivot < defaultPivot) sqrtPivot = defaultPivot;
 	integerStep = sqrtPivot / ONE_BYTE;
-	CreateLocalDirectory(DISTRIBUTION_SORT_TMP_DIR);
+	fileManager->CreateLocalDirectory(DISTRIBUTION_SORT_TMP_DIR);
 
 	uint64_t * integers = new uint64_t[2 * integerStep];
 	char * arrayToWrite = new char[sqrtPivot];
@@ -141,7 +107,7 @@ void Algorithm::DisributeFile()
 			else // get remembered file name and rewrite file
 			{
 				newBufferFN = bufferFileNames[iterBufferFileRead + passNum];
-				DeleteDataFile(newBufferFN);
+				fileManager->DeleteDataFile(newBufferFN);
 			}
 
 			// write left part of buffer to tmp file
@@ -150,7 +116,7 @@ void Algorithm::DisributeFile()
 			timePoint_2 = clock();
 			statistics.totalConvertTime += double(timePoint_2 - timePoint_1) / CLOCKS_PER_SEC;
 			timePoint_1 = clock();
-			WriteToDataFile(newBufferFN, arrayToWrite, sqrtPivot);
+			fileManager->WriteToDataFile(newBufferFN, arrayToWrite, sqrtPivot);
 			timePoint_2 = clock();
 			statistics.totalWriteTime += double(timePoint_2 - timePoint_1) / CLOCKS_PER_SEC;
 		}
@@ -163,7 +129,7 @@ void Algorithm::DisributeFile()
 		else // get remembered file name and rewrite file
 		{
 			newBufferFN = bufferFileNames[iterBufferFileRead + passNum];
-			DeleteDataFile(newBufferFN);
+			fileManager->DeleteDataFile(newBufferFN);
 		}
 
 		// write last right part of buffer to tmp file
@@ -173,7 +139,7 @@ void Algorithm::DisributeFile()
 		timePoint_2 = clock();
 		statistics.totalConvertTime += double(timePoint_2 - timePoint_1) / CLOCKS_PER_SEC;
 		timePoint_1 = clock();
-		WriteToDataFile(newBufferFN, arrayToWrite, writeLastFileLength);
+		fileManager->WriteToDataFile(newBufferFN, arrayToWrite, writeLastFileLength);
 		timePoint_2 = clock();
 		statistics.totalWriteTime += double(timePoint_2 - timePoint_1) / CLOCKS_PER_SEC;
 	}
@@ -194,13 +160,13 @@ void Algorithm::ConcatenateBuckets()
 		sortedData = this->SortFile(bufferFileNames[iter], sqrtPivot);
 		ConvertUint64ArrayToCharArray(sortedData, arrayToWrite, integerStep);
 		timePoint_1 = clock();
-		WriteToDataFile(outputFile, arrayToWrite, sqrtPivot);
+		fileManager->WriteToDataFile(outputFile, arrayToWrite, sqrtPivot);
 		timePoint_2 = clock();
 		statistics.totalSortTime += double(timePoint_2 - timePoint_1) / CLOCKS_PER_SEC;
-		DeleteDataFile(bufferFileNames[iter]);
+		fileManager->DeleteDataFile(bufferFileNames[iter]);
 	}
 	bufferFileNames.clear();
-	DeleteLocalDirectory(DISTRIBUTION_SORT_TMP_DIR);
+	fileManager->DeleteLocalDirectory(DISTRIBUTION_SORT_TMP_DIR);
 
 	endTimePoint = clock();
 	statistics.fullTimeElapsed = double(endTimePoint - startTimePoint) / CLOCKS_PER_SEC;
@@ -218,16 +184,16 @@ BOOL Algorithm::VerifyOutputFile()
 	// file data must be sorted
 	/*while (_ReadFile(outputFile, bufferIntegers, REED_FILE__BUFFER_SIZE, readIter))
 	{
-		for (DWORD iter = 1; iter < REED_FILE__BUFFER_SIZE / ONE_BYTE; ++iter)
-		{
-			if (bufferIntegers[iter] < bufferIntegers[iter - 1])
-			{
-				std::wstring wstr(outputFile.begin(), outputFile.end());
-				_tprintf(TEXT("ERROR: file \"%s\" is NOT sorted!\n"), wstr.c_str());
-				return FALSE;
-			}
-		}
-		readIter += REED_FILE__BUFFER_SIZE;
+	for (DWORD iter = 1; iter < REED_FILE__BUFFER_SIZE / ONE_BYTE; ++iter)
+	{
+	if (bufferIntegers[iter] < bufferIntegers[iter - 1])
+	{
+	std::wstring wstr(outputFile.begin(), outputFile.end());
+	_tprintf(TEXT("ERROR: file \"%s\" is NOT sorted!\n"), wstr.c_str());
+	return FALSE;
+	}
+	}
+	readIter += REED_FILE__BUFFER_SIZE;
 	}*/
 	free(bufferIntegers);
 
@@ -238,10 +204,10 @@ BOOL Algorithm::VerifyOutputFile()
 
 
 BOOL Algorithm::_ReadFile(std::string fileName, uint64_t * integers,
-	DWORD length, DWORD offset, DWORD integersOffset = 0)
+	DWORD length, DWORD offset, DWORD integersOffset)
 {
 	char *buffer = (char*)malloc(length + 1);
-	if (ReadDataFile(fileName, buffer, length, offset))
+	if (fileManager->ReadDataFile(fileName, buffer, length, offset))
 	{
 		clock_t convertTimeStart = clock();
 		ConvertCharArrayToUint64Array(buffer, integers,
@@ -257,4 +223,44 @@ BOOL Algorithm::_ReadFile(std::string fileName, uint64_t * integers,
 		return FALSE;
 	}
 }
-};
+
+// Check input file for correct contents.
+bool Algorithm::_ValidateDataFile(std::string fileName)
+{
+	if (fileName.length() == 0) fileName = inputFile;
+	char correctData[] = { '0', '1', '2' , '3' ,
+		'4' , '5' , '6' , '7' , '8' , '9' ,
+		'A' , 'B' , 'C' , 'D' , 'E' , 'F' };
+	startTimePoint = clock();
+
+	// file size must multiple 8
+	if (fileManager->GetFileSizeInBytes(fileName).QuadPart % ONE_BYTE != 0)
+	{
+		std::wstring wstr(fileName.begin(), fileName.end());
+		_tprintf(TEXT("ERROR: file \"%s\" has wrong size!\n"), wstr.c_str());
+		return FALSE;
+	}
+
+	char *buffer = (char*)malloc(REED_FILE__BUFFER_SIZE);
+	uint64_t readIter = 0;
+
+	// file data must contain specific characters
+	/*while (ReadDataFile(fileName, buffer, REED_FILE__BUFFER_SIZE, readIter))
+	{
+		char *nextChar = buffer;
+		while (*nextChar)
+		{
+			if (!strchr(correctData, *nextChar))
+			{
+				std::wstring wstr(fileName.begin(), fileName.end());
+				_tprintf(TEXT("ERROR: file \"%s\" has wrong character - '%c'!\n"), wstr.c_str(), nextChar);
+			}
+		}
+		readIter += REED_FILE__BUFFER_SIZE;
+	}*/
+	free(buffer);
+
+	endTimePoint = clock();
+	statistics.totalValidateTime = double(endTimePoint - startTimePoint) / CLOCKS_PER_SEC;
+	return TRUE;
+}
