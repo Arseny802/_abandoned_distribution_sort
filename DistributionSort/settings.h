@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
 // create test file or use existing
 #define CREATE_TEST_FILE TRUE
@@ -53,3 +54,5 @@
 
 // index of RMP value in ATAIdentifyDeviceQuery
 #define kNominalMediaRotRateWordIndex 217 
+
+#endif

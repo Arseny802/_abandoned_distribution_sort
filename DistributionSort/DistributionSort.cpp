@@ -1,14 +1,15 @@
-﻿#include "pch.h"
-#include "info.h"
-#include "benchmark.h"
-#include "QuiekSort.cpp"
-#include "HeapSort.cpp"
+﻿#include "DeviceInfo.h"
+#include "FileGenerator.h"
+#include "QuiekSort.h"
+#include "HeapSort.h"
 
 void TestDefaultFile(float size);
 
 int main(int argc, char *argv[])
 {
-	PrintDeviceInfo();
+	DeviceInfo * deviceInfo = new DeviceInfo();
+
+	deviceInfo->PrintDeviceInfo();
 	//CurrentDriveBenchmark();
 
 	if (argc > 1)
@@ -22,12 +23,15 @@ int main(int argc, char *argv[])
 		solution_1.ConcatenateBuckets();
 		solution_1.VerifyOutputFile();
 		solution_1.statistics.PrintStatistics();
-		PrintDeviceInfoRAM();
+		deviceInfo->PrintDeviceInfoRAM();
+		delete deviceInfo;
 	}
 	else
 	{
+		delete deviceInfo;
+
 		// Test 100 MB file
-		TestDefaultFile(0.2);
+		TestDefaultFile(0.1);
 
 		// Test 5 GB file
 		//TestDefaultFile(5);
@@ -43,10 +47,13 @@ int main(int argc, char *argv[])
 // Work function
 void TestDefaultFile(float size)
 {
+	DeviceInfo * deviceInfo = new DeviceInfo();
 	std::cout << "\n\nStart test file creating.\n\n";
-	GenerateDataFile(DEFAULT_INPUT_FILE, size);
+	FileGenerator * fileGenerator = new FileGenerator();
+	fileGenerator->GenerateDataFile(DEFAULT_INPUT_FILE, size);
+	delete fileGenerator;
 
-	PrintDeviceInfoRAM();
+	deviceInfo->PrintDeviceInfoRAM();
 	std::cout << "\n\nStart sortintg.\n\n";
 
 	QuiekSort solution_1 = QuiekSort(
@@ -55,7 +62,7 @@ void TestDefaultFile(float size)
 	solution_1.ConcatenateBuckets();
 	solution_1.statistics.PrintStatistics();
 	solution_1.VerifyOutputFile();
-	PrintDeviceInfoRAM();
+	deviceInfo->PrintDeviceInfoRAM();
 
 	HeapSort solution_2 = HeapSort(
 		DEFAULT_INPUT_FILE, Concat("2_", DEFAULT_OUTPUT_FILE));
@@ -63,5 +70,6 @@ void TestDefaultFile(float size)
 	solution_2.ConcatenateBuckets();
 	solution_2.statistics.PrintStatistics();
 	solution_2.VerifyOutputFile();
-	PrintDeviceInfoRAM();
+	deviceInfo->PrintDeviceInfoRAM();
+	delete deviceInfo;
 }
