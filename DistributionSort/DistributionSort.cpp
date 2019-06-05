@@ -1,7 +1,6 @@
 ﻿#include "DeviceInfo.h"
 #include "FileGenerator.h"
-#include "QuiekSort.h"
-#include "HeapSort.h"
+#include "Algorithms.h"
 
 void TestDefaultFile(float size);
 

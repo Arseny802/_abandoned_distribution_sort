@@ -1,3 +1,5 @@
+#ifndef FUNCTIONALITY
+#define FUNCTIONALITY
 
 #include "settings.h"
 
@@ -164,3 +166,5 @@ void LogToConsole1(char * message)
 {
 LogToConsole(str(message), objects);
 }*/
+
+#endif
